@@ -1,7 +1,7 @@
 services:
   - type: web
     name: laravel-backend
-    env: php
+    runtime: php-8.2
     plan: free
     region: frankfurt
 
