@@ -88,8 +88,8 @@ public function updateValueByKeyName(Request $request, $keyName)
             return response()->json(['message' => 'Valor actualizado correctamente']);
         } else {
             return response()->json(['message' => 'No se encontró la fila'], 404);
-        }
-}
+        }   
+    }
 
 
 
@@ -97,9 +97,23 @@ public function updateValueByKeyName(Request $request, $keyName)
 
     public function deleteValues(){
         $updated = DB::table('json_funcionalidades_keys')
+        ->whereIn('level1', ['operationMode', 'platform', 'language', 'flowSetup'])
          ->update([
             'value' => NULL,
             'updated_at' => now()
+        ]);
+    }
+
+    public function deleteValue(Request $request)
+    {
+        $keyName = $request->key_name;
+
+        $deleted = DB::table('json_funcionalidades_keys')
+            ->where('key_name', $keyName)
+            ->delete();
+
+        return response()->json([
+            'deleted' => $deleted
         ]);
     }
 
@@ -130,6 +144,32 @@ public function oldupdateValueByKeyName(Request $request, $keyName)
     }
 }
 
+
+
+//eliminar, no la uso
+    public function getByRole($role_id) {
+        // Filtra los items que corresponden a ese rol, 
+        //no tengo encuenta front leve. 
+        $items = JsonKey::whereHas('roles', function($q) use ($role_id) {
+            $q->where('role_id', $role_id);
+        })->get();
+
+        return response()->json($items);
+    }
+
+    public function clearValue(Request $request)
+    {
+        $keyName = $request->key_name;
+
+        $updated = DB::table('json_funcionalidades_keys')
+            ->where('key_name', $keyName)
+            ->update([
+                'value' => null,
+                'updated_at' => now()
+            ]);
+
+        return response()->json([
+            'updated' => $updated
+        ]);
+    }
 }
-
-

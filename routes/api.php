@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Funcionalidad1Controller;
 use App\Http\Controllers\JsonFuncionalidadesKeyController;
 
-// Todas las rutas de tu API van aquí
+// Todas las rutas de  API van aquí
 Route::get('/funcionalidades1', [Funcionalidad1Controller::class, 'index']);
 
 use App\Http\Controllers\JsonKeyController;
@@ -16,4 +16,12 @@ Route::get('/json_funcionalidades_keys/frontlevel/{frontlevel}', [JsonFuncionali
 Route::get('/json_funcionalidades_keys/filter/{frontlevel}/{key_name}', [JsonFuncionalidadesKeyController::class, 'filterByFrontLevelAndKey']);
 Route::get('/json_funcionalidades_keys/{frontlevel}/{frontparent}', [JsonFuncionalidadesKeyController::class, 'filterByFrontLevelAndFrontParent']);
 Route::put('/json_funcionalidades_keys/update/{keyName}', [JsonFuncionalidadesKeyController::class, 'updateValueByKeyName']);
-Route::delete('/json_funcionalidades_keys/values', [JsonFuncionalidadesKeyController::class, 'deleteValues']);
+Route::delete('/json_funcionalidades_keys/deleteall', [JsonFuncionalidadesKeyController::class, 'deleteValues']);
+Route::delete('/json_funcionalidades_keys/delete/{keyName}', [JsonFuncionalidadesKeyController::class, 'deleteValue']);
+Route::put('/json_funcionalidades_keys/value',  [JsonFuncionalidadesKeyController::class, 'clearValue']);//login 
+use App\Http\Controllers\AuthController;
+
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/user/functionalities/{userId}/{parentKey}', [AuthController::class, 'getUserFunctionalities']);
+
