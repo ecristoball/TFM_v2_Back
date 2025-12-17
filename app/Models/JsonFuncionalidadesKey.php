@@ -13,6 +13,9 @@ class JsonFuncionalidadesKey extends Model
      'level5','level6', 'level7','level8',
      'value',
      'required',
-     'id_frontparent'
+     'id_frontparent',
+     'defaultValue',
+     'imagenUrl',
+     'borrable'
     ];
 }

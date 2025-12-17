@@ -172,4 +172,23 @@ public function oldupdateValueByKeyName(Request $request, $keyName)
             'updated' => $updated
         ]);
     }
+public function getDefaultValue($key_name) {
+    $value = DB::table('json_funcionalidades_keys')
+        ->where('key_name', $key_name)
+        ->value('defaultValue'); // devuelve directamente el valor
+
+    return response()->json([ $value]);
+}
+public function getImageUrl($key_name)
+{
+    $imagenUrl = DB::table('json_funcionalidades_keys')
+        ->where('key_name', $key_name)
+        ->value('imagenUrl');
+
+    return response()->json([
+        'imagenUrl' => $imagenUrl ? asset($imagenUrl) : null
+    ]);
+}
+
+    
 }
