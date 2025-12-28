@@ -47,18 +47,17 @@ class JsonFuncionalidadesKeyController extends Controller
 
         return response()->json($items);
     }
-    //para generar el json, extrae todos los niveles, incluyendo los no vacios o los required
-    public function getLevelsByFrontLevel($frontlevel)
+    //ec para generar el json, extrae todos los niveles, incluyendo los no vacios o los required
+    public function getLevelsByFrontLevel()
     {
         $items = DB::table('json_funcionalidades_keys')
             ->select('level1','level2','level3','level4','level5','level6','level7','level8','value','required','key_name')
-            ->where('frontlevel', $frontlevel)
+            //->where('frontlevel', $frontlevel)
+             ->whereIn('level', ['2', '12'])
             ->whereNotNull('value')        // 🔹 descarta valores NULL
             ->where('value', '<>', '')    // 🔹 descarta strings vacíos
             ->orwhere('required',true)
             ->get();
-
-    
         return response()->json($items);
     }
  
@@ -95,15 +94,17 @@ public function updateValueByKeyName(Request $request, $keyName)
 
 
 
-    public function deleteValues(){
+    public function deleteAllValues(){
         $updated = DB::table('json_funcionalidades_keys')
-        ->whereIn('level1', ['operationMode', 'platform', 'language', 'flowSetup'])
-         ->update([
+       
+         ->where('borrable', '!=', 1) 
+        ->update([
             'value' => NULL,
             'updated_at' => now()
         ]);
     }
 
+    /*
     public function deleteValue(Request $request)
     {
         $keyName = $request->key_name;
@@ -116,7 +117,7 @@ public function updateValueByKeyName(Request $request, $keyName)
             'deleted' => $deleted
         ]);
     }
-
+*/
 
 public function oldupdateValueByKeyName(Request $request, $keyName)
 {
