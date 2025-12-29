@@ -23,4 +23,4 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
 # Composer
-COPY --from=composer:2.7 /usr/bin/composer
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
