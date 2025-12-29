@@ -1,8 +1,3 @@
-
-
-
-
-
 # Base PHP-FPM
 FROM php:8.2-fpm
 
@@ -37,8 +32,8 @@ RUN rm /etc/nginx/sites-enabled/default
 COPY ./deploy/nginx.conf /etc/nginx/sites-available/laravel.conf
 RUN ln -s /etc/nginx/sites-available/laravel.conf /etc/nginx/sites-enabled/
 
-# Exponer puerto
+# Exponer puerto 80
 EXPOSE 80
 
-# Comando de inicio ajustado
-CMD service nginx start && php-fpm -F
+# Comando de inicio: Nginx + PHP-FPM
+CMD nginx -g "daemon off;" & php-fpm -F
