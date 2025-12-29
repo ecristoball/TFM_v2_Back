@@ -1,9 +1,10 @@
 # Base PHP-FPM
 FROM php:8.2-fpm
 
-# Instalar extensiones necesarias y Nginx
+# Instalar extensiones necesarias, Nginx y supervisor
 RUN apt-get update && apt-get install -y \
     nginx \
+    supervisor \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
@@ -32,8 +33,12 @@ RUN rm /etc/nginx/sites-enabled/default
 COPY ./deploy/nginx.conf /etc/nginx/sites-available/laravel.conf
 RUN ln -s /etc/nginx/sites-available/laravel.conf /etc/nginx/sites-enabled/
 
-# Exponer puerto 80
+# Copiar configuración de supervisord
+COPY ./deploy/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Exponer puerto
 EXPOSE 80
 
-# Comando de inicio: Nginx + PHP-FPM
-CMD nginx -g "daemon off;" & php-fpm -F
+# Iniciar supervisord
+CMD ["/usr/bin/supervisord"]
+
