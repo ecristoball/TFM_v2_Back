@@ -1,9 +1,8 @@
-FROM php:8.2-fpm
+# Usamos PHP CLI, no-FPM ni Nginx
+FROM php:8.2-cli
 
-# Sistema + Nginx + Supervisor
+# Instalar dependencias del sistema y extensiones PHP
 RUN apt-get update && apt-get install -y \
-    nginx \
-    supervisor \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
@@ -11,29 +10,24 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    && docker-php-ext-install pdo_mysql mbstring bcmath gd \
     && rm -rf /var/lib/apt/lists/*
 
-# 🔥 BORRAR TODAS las configs por defecto de nginx
-RUN rm -rf /etc/nginx/conf.d/*
-
-# Código Laravel
-COPY . /var/www/html
-
-# Permisos
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Composer
+# Instalar Composer
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
-RUN cd /var/www/html && composer install --no-dev --optimize-autoloader
 
-# 👉 TU CONFIG (la única)
-COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+# Copiar el código de Laravel
+WORKDIR /app
+COPY . .
 
-# Supervisor
-COPY deploy/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Permisos para storage y bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
 
-EXPOSE 8080
+# Instalar dependencias PHP de Laravel
+RUN composer install --no-dev --optimize-autoloader
 
-CMD ["/usr/bin/supervisord", "-n"]
+# Puerto que Railway asignará dinámicamente
+ENV PORT=8080
+
+# Comando de inicio
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
