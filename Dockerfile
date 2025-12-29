@@ -1,7 +1,7 @@
 # Base PHP-FPM
 FROM php:8.2-fpm
 
-# Instalar extensiones necesarias, Nginx y supervisor
+# Instalar extensiones, Nginx y supervisor
 RUN apt-get update && apt-get install -y \
     nginx \
     supervisor \
@@ -17,28 +17,10 @@ RUN apt-get update && apt-get install -y \
 # Copiar código Laravel
 COPY . /var/www/html
 
-# Permisos para Laravel
+# Permisos Laravel
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Instalar Composer
-COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
-
-# Instalar dependencias Laravel
-RUN composer install --no-dev --optimize-autoloader
-
-# Configurar Nginx
-RUN rm /etc/nginx/sites-enabled/default
-COPY ./deploy/nginx.conf /etc/nginx/sites-available/laravel.conf
-RUN ln -s /etc/nginx/sites-available/laravel.conf /etc/nginx/sites-enabled/
-
-# Copiar configuración de supervisord
-COPY ./deploy/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Exponer puerto
-EXPOSE 80
-
-# Iniciar supervisord
-CMD ["/usr/bin/supervisord"]
-
+# Composer
+COPY --from=composer:2.7 /usr/bin/composer
